@@ -1,11 +1,12 @@
 name: ci
 
 on:
-  push:
-    branches:
-      - master
   schedule:
-    - cron: "0 0,1,2,3,4,5,6,7 * * *"
+    - cron: "0 1 * * *"
+    - cron: "0 5 * * *"
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+
 
 jobs:
   autogreen:
@@ -14,7 +15,12 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v2
 
-      - name: Auto commit
+      - name: Random Decide for Submitting
+        id: random_decision
+        run: echo "should_commit=$(( $RANDOM % 2 ))" >> $GITHUB_ENV
+
+      - name: Conditional commit
+        if: env.should_commit == '1'
         run: |
           git config --local user.email "magiclz233@163.com"
           git config --local user.name "magiclz233"
